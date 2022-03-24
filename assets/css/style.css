@@ -111,6 +111,21 @@ main {
   margin-top: 5px;
 }
 
+/* WEATHER SUMMARY CONTAINER */
+#weather-summary-container {
+  border: 2px solid var(--dark);
+  padding: 10px;
+}
+
+#weather-summary-container p {
+  line-height: 1.5;
+  font-size: 18px;
+}
+
+#five-day-forecast {
+  margin-top: 20px;
+}
+
 /* HEIGHT / WIDTH UTILS */
 .min-100-vh {
   min-height: 100vh;

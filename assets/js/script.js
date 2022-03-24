@@ -24,7 +24,8 @@ var formSubmitHandler = function(event) {
 var buttonClickHandler = function(event) {
 
   //get the city name from the button
-  
+  console.log(event.target)
+
   getWeather(city);
 };
 
