@@ -17,7 +17,7 @@
 
   <main class="flex-row justify-space-between">
     <div class="col-12 col-md-3">
-      <h2 class="card-header">Search for a City:</h2>
+      <h2 class="card-header-large">Search for a City:</h2>
       <div class="card card-body">
         <form id="user-form">
           <input id="city" type="text" autofocus="true" class="form-input" />
@@ -25,22 +25,24 @@
         </form>
         
         <div id="history-buttons">
-          <!-- load buttons (historical searches) -->
+          <!-- load buttons (historical searches) in script.js-->
         </div>
       </div>
     </div>
 
     <div class="col-12 col-md-9">
       <div id="weather-summary-container">
-        <h3 class="card-header">-----------------</h3><img id="weather-icon" src=""></img>
+        <h3 class="card-header-med">-----------------</h3>
+        <img id="weather-icon" src=""></img>
         <p>Temp: <span id="temp-value">---</span></p>
         <p>Wind: <span id="wind-value">---</span></p>
         <p>Humidity: <span id="humidity-value">---</span></p>
         <p>UV Index: <span id="uv-index">---</span></p>
       </div>
 
-      <div id="five-day-forecast">
-        <h4 class="card-header">5-Day Forecast</h4>
+      <h4 class="card-header-med">5-Day Forecast</h4>
+      <div class="flex-row" id="five-day-forecast">
+        <!-- load 5 day forecast in script.js -->
       </div>
     </div>
   </main>

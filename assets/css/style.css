@@ -29,7 +29,6 @@ h5,
 h6 {
   font-weight: 700;
   margin: 0;
-  color: var(--primary);
   line-height: 1.25;
 }
 
@@ -69,13 +68,23 @@ main {
 }
 
 /* CARDS */
-.card-header {
-  color: var(--dark);
+.card-header-large {
   font-size: 30px;
+}
+
+.card-header-med {
+  font-size: 24px;
 }
 
 .card-body {
   padding: 2.5%;
+}
+
+.weather-card {
+  background-color: var(--secondary);
+  color: var(--light);
+  margin: 1%;
+  padding: 1%;
 }
 
 /* FORM */
@@ -116,6 +125,8 @@ main {
   padding: 10px;
   background-color: var(--light);
   border-radius: var(--border-radius);
+  color: var(--dark);
+  margin-bottom: 10px;
 }
 
 #weather-summary-container p {
@@ -127,8 +138,10 @@ main {
   float: right;
 }
 
-#five-day-forecast {
-  margin-top: 20px;
+/* FIVE DAY FORECAST CONTAINER */
+#five-day-forecast p {
+  line-height: 2;
+  font-size: 16px;
 }
 
 /* HEIGHT / WIDTH UTILS */

@@ -126,13 +126,13 @@ var displayWeatherSummary = function(data) {
   var uvi = data.current.uvi
   var uviEl = document.querySelector("#uv-index");
 
-  var date = new Date(data.current.dt * 1000).toLocaleDateString("en-US");
+  var date = new Date(data.daily[0].dt * 1000).toLocaleDateString("en-US");
 
-  document.querySelector("#weather-summary-container .card-header").textContent = cityData[2] + ", " + cityData[3] + ", " + cityData[4] + " - " + date;
-  document.getElementById("weather-icon").setAttribute("src", "http://openweathermap.org/img/wn/" + data.current.weather[0].icon + "@2x.png");
-  document.querySelector("#temp-value").textContent = data.current.temp + " " + String.fromCharCode(176) + "F";
-  document.querySelector("#wind-value").textContent = data.current.wind_speed + " MPH";
-  document.querySelector("#humidity-value").textContent = data.current.humidity + "%";
+  document.querySelector("#weather-summary-container .card-header-med").textContent = cityData[2] + ", " + cityData[3] + ", " + cityData[4] + " - " + date;
+  document.getElementById("weather-icon").setAttribute("src", "http://openweathermap.org/img/wn/" + data.current.weather[0].icon + "@4x.png");
+  document.getElementById("temp-value").textContent = data.current.temp + " " + String.fromCharCode(176) + "F";
+  document.getElementById("wind-value").textContent = data.current.wind_speed + " MPH";
+  document.getElementById("humidity-value").textContent = data.current.humidity + "%";
   uviEl.textContent = uvi;
 
   if (uvi < 3) {
@@ -154,9 +154,49 @@ var displayWeatherSummary = function(data) {
 
 var displayForecast = function(data) {
 
-  currentDate = new Date(data.current.dt * 1000);
-  
+  fiveDayForecastEl = document.getElementById("five-day-forecast");
+  fiveDayForecastEl.innerHTML = "";
 
+  //next 5 days of forecast are index 1-5 in the api data
+  for (var i = 1; i <= 5; i++) {
+
+    var dateHeaderEl = document.createElement("h4");
+    dateHeaderEl.className = "card-header-med";
+    var today = new Date(data.daily[i].dt * 1000)
+    dateHeaderEl.textContent= today.toLocaleDateString("en-US");
+
+    var dayCardEl = document.createElement("div");
+    dayCardEl.className = "weather-card col-auto";
+
+    var uvi = data.daily[i].uvi;
+    var pEl = document.createElement("p");
+    pEl.innerHTML = "Temp: " + data.daily[i].temp.day + "</br>Wind: " + data.daily[i].wind_speed+ "MPH</br>Humidity: " + data.daily[i].humidity + "%</br>UV Index: <span id='uvi-daily-"+ i +"'>"+ uvi + "</span>";
+
+    var dayIconEl = document.createElement("img");
+    dayIconEl.setAttribute("src", "http://openweathermap.org/img/wn/" + data.daily[i].weather[0].icon + "@2x.png");
+    dayIconEl.setAttribute("style", "float: right;");
+
+    dayCardEl.append(dateHeaderEl, pEl, dayIconEl);
+    
+    fiveDayForecastEl.appendChild(dayCardEl);
+
+    uviEl = document.getElementById("uvi-daily-" + i);
+    if (uvi < 3) {
+      uviEl.setAttribute("style", "background-color: lightgreen; color: var(--dark)");
+    }
+    else if (uvi < 6) {
+      uviEl.setAttribute("style", "background-color: yellow; color: var(--dark)")
+    }
+    else if (uvi < 8) {
+      uviEl.setAttribute("style", "background-color: orange; color: var(--dark)")
+    }
+    else if (uvi < 11) {
+      uviEl.setAttribute("style", "background-color: red; color: var(--dark)")
+    }
+    else {
+      uviEl.setAttribute("style", "background-color: purple; color: var(--dark)")
+    }
+  }
 }
 
 //load the past searches for easy access
