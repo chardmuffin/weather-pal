@@ -1,8 +1,8 @@
 :root {
   --primary: white;
   --secondary: #9892f7;
-  --tertiary: #bacece;
-  --light-dark: #6f6866;
+  --tertiary: #bac8ce;
+  --light: #e9eaff;
   --dark: #150a50;
   --border-radius: .3rem;
 }
@@ -95,7 +95,6 @@ main {
   padding: 3%;
   margin: 5px 0;
   font-size: 1.2rem;
-  border: 2px solid var(--light-dark);
   border-radius: var(--border-radius);
 }
 
@@ -115,11 +114,17 @@ main {
 #weather-summary-container {
   border: 2px solid var(--dark);
   padding: 10px;
+  background-color: var(--light);
+  border-radius: var(--border-radius);
 }
 
 #weather-summary-container p {
   line-height: 1.5;
   font-size: 18px;
+}
+
+#weather-icon {
+  float: right;
 }
 
 #five-day-forecast {
