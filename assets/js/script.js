@@ -148,7 +148,7 @@ var displayForecast = function(data) {
     var pEl = document.createElement("p");
     pEl.innerHTML = "Temp: " + data.daily[i].temp.day + " " + String.fromCharCode(176) +
                     "F</br>Wind: " + data.daily[i].wind_speed +
-                    "MPH</br>Humidity: " + data.daily[i].humidity +
+                    " MPH</br>Humidity: " + data.daily[i].humidity +
                     "%</br>UV Index: <span id='uvi-daily-"+ i +"'>"+ uvi + "</span>";
 
     var dayIconEl = document.createElement("img");
