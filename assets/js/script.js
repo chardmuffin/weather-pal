@@ -13,10 +13,8 @@ var formSubmitHandler = async function(event) {
   var cityName = cityInputEl.value.trim();
 
   if (cityName) {
+    await setCityData(cityName);
     getWeather();
-
-    // clear old content
-    cityInputEl.value = "";
   } else {
     alert("Please enter a city");
   }
@@ -24,15 +22,19 @@ var formSubmitHandler = async function(event) {
 
 var buttonClickHandler = async function(event) {
 
+  // if misclick between buttons
+  if (event.target.tagName === "DIV") {
+    return;
+  }
+
   //get the city name from the button
   city = event.target.textContent.trim();
 
+  await setCityData(city);
   getWeather();
 };
 
 var getWeather = async function() {
-
-  await setCityData(city);
 
   // if the city was not found
   if (cityData.length == 0) {
@@ -119,11 +121,18 @@ var setCityData = async function(city) {
       else if (pastSearches.indexOf(city) === -1) {
         pastSearches.push(city);
       }
+
+      // remove oldest search item if more than 10 items
+      if (pastSearches.length == 11) {
+        pastSearches.shift();
+      }
+
+      //save to local storage, refresh list of past searches
       localStorage.setItem("pastSearches", JSON.stringify(pastSearches));
       loadPastSearches();
 
       // store latitude and longitude of the city in an array where index 0 = latitude and index 1 = longitude
-      // store state and country in index = 2 and index = 3 respectively
+      // store city, state and country in index = 2, 3, 4 respectively
       cityData = [data[0].lat, data[0].lon, data[0].name, data[0].state, data[0].country];
     }
     else {
@@ -135,8 +144,6 @@ var setCityData = async function(city) {
     console.log("Unable to connect to Geocoding API");
     console.log(error);
   });
-
-  return;
 }
 
 var displayWeatherSummary = function(data) {
@@ -159,10 +166,10 @@ var loadPastSearches = function() {
   pastSearches = JSON.parse(localStorage.getItem("pastSearches"));
   
   if(pastSearches !== null) {
-    for (searchTerm of pastSearches) {
+    for (var i = pastSearches.length - 1; i >= 0; i--) {
     buttonEl = document.createElement("button");
     buttonEl.className = "btn";
-    buttonEl.textContent = searchTerm;
+    buttonEl.textContent = pastSearches[i];
     document.getElementById("history-buttons").appendChild(buttonEl);
     }
   }
