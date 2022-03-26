@@ -84,7 +84,7 @@ var setCityData = async function(city) {
       if (pastSearches === null) {
         pastSearches = [data[0].name];
       }
-      else if (pastSearches.indexOf(city) === -1) {
+      else if (pastSearches.indexOf(data[0].name) === -1) {
         pastSearches.push(data[0].name);
       }
 
