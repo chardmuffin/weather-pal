@@ -5,11 +5,13 @@ var APIKey = "d9e5ba7e4082c6b542e25c028b4913b6";
 var cityData = [];
 var pastSearches = [];
 
+//runs when search button is pressed or enter key pressed with form filled and in focus
 var formSubmitHandler = function(event) {
   // prevent page from refreshing
   event.preventDefault();
 
   var city = cityInputEl.value.trim();
+  cityInputEl.value = "";
 
   if (city) {
     getWeather(city);
@@ -18,8 +20,8 @@ var formSubmitHandler = function(event) {
   }
 };
 
+//function is triggered when history buttons are pressed
 var buttonClickHandler = function(event) {
-
   // if misclick between buttons
   if (event.target.tagName === "DIV") {
     return;
@@ -29,24 +31,21 @@ var buttonClickHandler = function(event) {
   getWeather(city);
 };
 
+// makes a call to the open weather one call API
 var getWeather = async function(city) {
-
+  // load the necessary city data before doing anything else
   await setCityData(city);
 
-  // if the city was not found
+  // abort if the city was not found
   if (cityData.length == 0) {
     return;
   }
   
-  // format the weather api urls
   var queryURLA = "http://api.openweathermap.org/data/2.5/onecall?lat=" + cityData[0] + "&lon=" + cityData[1] + "&exclude=minutely,hourly,alerts&units=imperial&appid=" + APIKey;
 
-  // make a get request to url
   await fetch(queryURLA)
   .then(function(response) {
-    // request was successful
     if (response.ok) {
-      console.log(response);
       return response.json();
     } else {
       console.log("Error: " + response.statusText);
@@ -59,24 +58,18 @@ var getWeather = async function(city) {
     displayForecast(data);
   })
   .catch(function(error) {
-    console.log("Unable to connect to Weather API");
+    console.log("Unable to connect to Weather API: ");
     console.log(error);
   });
 };
 
 // sets the city name, state, country, longitude and latitude in the global var cityData array
 var setCityData = async function(city) {
-  //format geocoding url to get info about the city
   var queryURL = "http://api.openweathermap.org/geo/1.0/direct?q=" + city + "&appid=" + APIKey;
 
-  // make a get request to url
   await fetch(queryURL)
   .then(function(response) {
-    // request was successful
     if (response.ok) {
-      console.log(response);
-      
-
       return response.json();
     } else {
       console.log("Error: " + response.statusText);
@@ -87,7 +80,6 @@ var setCityData = async function(city) {
     console.log(data);
 
     if (data.length !== 0) {
-
       // add search to past searches if it's a new city
       if (pastSearches === null) {
         pastSearches = [data[0].name];
@@ -115,14 +107,13 @@ var setCityData = async function(city) {
     }
   })
   .catch(function(error) {
-    console.log("Unable to connect to Geocoding API");
+    console.log("Unable to connect to Geocoding API: ");
     console.log(error);
   });
 }
 
 // display general summary of today's weather at the specified city
 var displayWeatherSummary = function(data) {
-
   var uvi = data.current.uvi
   var uviEl = document.querySelector("#uv-index");
 
@@ -134,26 +125,11 @@ var displayWeatherSummary = function(data) {
   document.getElementById("wind-value").textContent = data.current.wind_speed + " MPH";
   document.getElementById("humidity-value").textContent = data.current.humidity + "%";
   uviEl.textContent = uvi;
-
-  if (uvi < 3) {
-    uviEl.setAttribute("style", "background-color: lightgreen;");
-  }
-  else if (uvi < 6) {
-    uviEl.setAttribute("style", "background-color: yellow;")
-  }
-  else if (uvi < 8) {
-    uviEl.setAttribute("style", "background-color: orange;")
-  }
-  else if (uvi < 11) {
-    uviEl.setAttribute("style", "background-color: red;")
-  }
-  else {
-    uviEl.setAttribute("style", "background-color: purple;")
-  }
+  uviEl.setAttribute("style", "background-color: " + getUVIColor(uvi) +";");
 };
 
+// display the 5-day forecast from the API data
 var displayForecast = function(data) {
-
   fiveDayForecastEl = document.getElementById("five-day-forecast");
   fiveDayForecastEl.innerHTML = "";
 
@@ -170,7 +146,10 @@ var displayForecast = function(data) {
 
     var uvi = data.daily[i].uvi;
     var pEl = document.createElement("p");
-    pEl.innerHTML = "Temp: " + data.daily[i].temp.day + "</br>Wind: " + data.daily[i].wind_speed+ "MPH</br>Humidity: " + data.daily[i].humidity + "%</br>UV Index: <span id='uvi-daily-"+ i +"'>"+ uvi + "</span>";
+    pEl.innerHTML = "Temp: " + data.daily[i].temp.day + " " + String.fromCharCode(176) +
+                    "F</br>Wind: " + data.daily[i].wind_speed +
+                    "MPH</br>Humidity: " + data.daily[i].humidity +
+                    "%</br>UV Index: <span id='uvi-daily-"+ i +"'>"+ uvi + "</span>";
 
     var dayIconEl = document.createElement("img");
     dayIconEl.setAttribute("src", "http://openweathermap.org/img/wn/" + data.daily[i].weather[0].icon + "@2x.png");
@@ -181,22 +160,25 @@ var displayForecast = function(data) {
     fiveDayForecastEl.appendChild(dayCardEl);
 
     uviEl = document.getElementById("uvi-daily-" + i);
-    if (uvi < 3) {
-      uviEl.setAttribute("style", "background-color: lightgreen; color: var(--dark)");
-    }
-    else if (uvi < 6) {
-      uviEl.setAttribute("style", "background-color: yellow; color: var(--dark)")
-    }
-    else if (uvi < 8) {
-      uviEl.setAttribute("style", "background-color: orange; color: var(--dark)")
-    }
-    else if (uvi < 11) {
-      uviEl.setAttribute("style", "background-color: red; color: var(--dark)")
-    }
-    else {
-      uviEl.setAttribute("style", "background-color: purple; color: var(--dark)")
-    }
+    uviEl.setAttribute("style", "background-color: " + getUVIColor(uvi) + "; color: var(--dark)");
   }
+}
+
+// helper function to determine background color of uvi (severity)
+var getUVIColor = function(uvi) {
+  if (uvi < 3) {
+    return "lightgreen";
+  }
+  else if (uvi < 6) {
+    return "yellow";
+  }
+  else if (uvi < 8) {
+    return "orange";
+  }
+  else if (uvi < 11) {
+    return "red";
+  }
+  return "purple";
 }
 
 //load the past searches for easy access
