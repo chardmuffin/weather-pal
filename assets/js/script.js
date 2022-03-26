@@ -41,7 +41,7 @@ var getWeather = async function(city) {
     return;
   }
   
-  var queryURLA = "http://api.openweathermap.org/data/2.5/onecall?lat=" + cityData[0] + "&lon=" + cityData[1] + "&exclude=minutely,hourly,alerts&units=imperial&appid=" + APIKey;
+  var queryURLA = "https://api.openweathermap.org/data/2.5/onecall?lat=" + cityData[0] + "&lon=" + cityData[1] + "&exclude=minutely,hourly,alerts&units=imperial&appid=" + APIKey;
 
   await fetch(queryURLA)
   .then(function(response) {
@@ -65,7 +65,7 @@ var getWeather = async function(city) {
 
 // sets the city name, state, country, longitude and latitude in the global var cityData array
 var setCityData = async function(city) {
-  var queryURL = "http://api.openweathermap.org/geo/1.0/direct?q=" + city + "&appid=" + APIKey;
+  var queryURL = "https://api.openweathermap.org/geo/1.0/direct?q=" + city + "&appid=" + APIKey;
 
   await fetch(queryURL)
   .then(function(response) {
@@ -120,7 +120,7 @@ var displayWeatherSummary = function(data) {
   var date = new Date(data.daily[0].dt * 1000).toLocaleDateString("en-US");
 
   document.querySelector("#weather-summary-container .card-header-med").textContent = cityData[2] + ", " + cityData[3] + ", " + cityData[4] + " - " + date;
-  document.getElementById("weather-icon").setAttribute("src", "http://openweathermap.org/img/wn/" + data.current.weather[0].icon + "@4x.png");
+  document.getElementById("weather-icon").setAttribute("src", "https://openweathermap.org/img/wn/" + data.current.weather[0].icon + "@4x.png");
   document.getElementById("temp-value").textContent = data.current.temp + " " + String.fromCharCode(176) + "F";
   document.getElementById("wind-value").textContent = data.current.wind_speed + " MPH";
   document.getElementById("humidity-value").textContent = data.current.humidity + "%";
@@ -152,7 +152,7 @@ var displayForecast = function(data) {
                     "%</br>UV Index: <span id='uvi-daily-"+ i +"'>"+ uvi + "</span>";
 
     var dayIconEl = document.createElement("img");
-    dayIconEl.setAttribute("src", "http://openweathermap.org/img/wn/" + data.daily[i].weather[0].icon + "@2x.png");
+    dayIconEl.setAttribute("src", "https://openweathermap.org/img/wn/" + data.daily[i].weather[0].icon + "@2x.png");
     dayIconEl.setAttribute("style", "float: right;");
 
     dayCardEl.append(dateHeaderEl, pEl, dayIconEl);
