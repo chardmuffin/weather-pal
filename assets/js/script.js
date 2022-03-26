@@ -5,36 +5,33 @@ var APIKey = "d9e5ba7e4082c6b542e25c028b4913b6";
 var cityData = [];
 var pastSearches = [];
 
-var formSubmitHandler = async function(event) {
+var formSubmitHandler = function(event) {
   // prevent page from refreshing
   event.preventDefault();
 
-  // get value from input element
-  var cityName = cityInputEl.value.trim();
+  var city = cityInputEl.value.trim();
 
-  if (cityName) {
-    await setCityData(cityName);
-    getWeather();
+  if (city) {
+    getWeather(city);
   } else {
     alert("Please enter a city");
   }
 };
 
-var buttonClickHandler = async function(event) {
+var buttonClickHandler = function(event) {
 
   // if misclick between buttons
   if (event.target.tagName === "DIV") {
     return;
   }
 
-  //get the city name from the button
   city = event.target.textContent.trim();
-
-  await setCityData(city);
-  getWeather();
+  getWeather(city);
 };
 
-var getWeather = async function() {
+var getWeather = async function(city) {
+
+  await setCityData(city);
 
   // if the city was not found
   if (cityData.length == 0) {
@@ -42,15 +39,13 @@ var getWeather = async function() {
   }
   
   // format the weather api urls
-  var queryURLA = "http://api.openweathermap.org/data/2.5/weather?lat=" + cityData[0] + "&lon=" + cityData[1] + "&units=imperial&appid=" + APIKey;
-  var queryURLB = "http://api.openweathermap.org/data/2.5/forecast?lat=" + cityData[0] + "&lon=" + cityData[1] + "&units=imperial&appid=" + APIKey;
+  var queryURLA = "http://api.openweathermap.org/data/2.5/onecall?lat=" + cityData[0] + "&lon=" + cityData[1] + "&exclude=minutely,hourly,alerts&units=imperial&appid=" + APIKey;
 
-  // make a get request to url A
+  // make a get request to url
   await fetch(queryURLA)
   .then(function(response) {
     // request was successful
     if (response.ok) {
-      console.log("Weather API Response: ");
       console.log(response);
       return response.json();
     } else {
@@ -58,38 +53,18 @@ var getWeather = async function() {
     }
   })
   .then(function(data) {
-    console.log("Weather API data: " + data);
+    console.log("Weather data: ");
     console.log(data);
     displayWeatherSummary(data);
+    displayForecast(data);
   })
   .catch(function(error) {
     console.log("Unable to connect to Weather API");
     console.log(error);
   });
-
-  // make a get request to url B
-  await fetch(queryURLB)
-  .then(function(response) {
-    // request was successful
-    if (response.ok) {
-      console.log("Weather API 5-day Forecast Response: ");
-      console.log(response);
-      return response.json();
-    } else {
-      console.log("Error: " + response.statusText);
-    }
-  })
-  .then(function(data) {
-    console.log("Weather API 5-day Forecast data: " + data);
-    console.log(data);
-    displayForecast(data);
-  })
-  .catch(function(error) {
-    console.log("Unable to connect to 5-Day Forecast Weather API");
-    console.log(error);
-  });
 };
 
+// sets the city name, state, country, longitude and latitude in the global var cityData array
 var setCityData = async function(city) {
   //format geocoding url to get info about the city
   var queryURL = "http://api.openweathermap.org/geo/1.0/direct?q=" + city + "&appid=" + APIKey;
@@ -99,7 +74,6 @@ var setCityData = async function(city) {
   .then(function(response) {
     // request was successful
     if (response.ok) {
-      console.log("Geocoding API Response: ");
       console.log(response);
       
 
@@ -109,17 +83,17 @@ var setCityData = async function(city) {
     }
   })
   .then(function(data) {
-    console.log("Geocoding API data: ");
+    console.log("Geocoding data: ");
     console.log(data);
 
     if (data.length !== 0) {
 
       // add search to past searches if it's a new city
       if (pastSearches === null) {
-        pastSearches = [city];
+        pastSearches = [data[0].name];
       }
       else if (pastSearches.indexOf(city) === -1) {
-        pastSearches.push(city);
+        pastSearches.push(data[0].name);
       }
 
       // remove oldest search item if more than 10 items
@@ -146,17 +120,42 @@ var setCityData = async function(city) {
   });
 }
 
+// display general summary of today's weather at the specified city
 var displayWeatherSummary = function(data) {
 
-  document.querySelector("#weather-summary-container .card-header").textContent = cityData[2] + ", " + cityData[3] + ", " + cityData[4];
-  document.getElementById("weather-icon").setAttribute("src", "http://openweathermap.org/img/wn/" + data.weather[0].icon + "@2x.png");
-  document.querySelector("#temp-value").textContent = data.main.temp + " " + String.fromCharCode(176) + "F";
-  document.querySelector("#wind-value").textContent = data.wind.speed + " MPH";
-  document.querySelector("#humidity-value").textContent = data.main.humidity + "%";
-  document.querySelector("#uv-index").textContent = "---";
+  var uvi = data.current.uvi
+  var uviEl = document.querySelector("#uv-index");
+
+  var date = new Date(data.current.dt * 1000).toLocaleDateString("en-US");
+
+  document.querySelector("#weather-summary-container .card-header").textContent = cityData[2] + ", " + cityData[3] + ", " + cityData[4] + " - " + date;
+  document.getElementById("weather-icon").setAttribute("src", "http://openweathermap.org/img/wn/" + data.current.weather[0].icon + "@2x.png");
+  document.querySelector("#temp-value").textContent = data.current.temp + " " + String.fromCharCode(176) + "F";
+  document.querySelector("#wind-value").textContent = data.current.wind_speed + " MPH";
+  document.querySelector("#humidity-value").textContent = data.current.humidity + "%";
+  uviEl.textContent = uvi;
+
+  if (uvi < 3) {
+    uviEl.setAttribute("style", "background-color: lightgreen;");
+  }
+  else if (uvi < 6) {
+    uviEl.setAttribute("style", "background-color: yellow;")
+  }
+  else if (uvi < 8) {
+    uviEl.setAttribute("style", "background-color: orange;")
+  }
+  else if (uvi < 11) {
+    uviEl.setAttribute("style", "background-color: red;")
+  }
+  else {
+    uviEl.setAttribute("style", "background-color: purple;")
+  }
 };
 
 var displayForecast = function(data) {
+
+  currentDate = new Date(data.current.dt * 1000);
+  
 
 }
 
