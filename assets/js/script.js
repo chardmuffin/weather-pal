@@ -41,9 +41,9 @@ var getWeather = async function(city) {
     return;
   }
   
-  var queryURLA = "https://api.openweathermap.org/data/2.5/onecall?lat=" + cityData[0] + "&lon=" + cityData[1] + "&exclude=minutely,hourly,alerts&units=imperial&appid=" + APIKey;
+  var queryURL = "https://api.openweathermap.org/data/2.5/onecall?lat=" + cityData[0] + "&lon=" + cityData[1] + "&exclude=minutely,hourly,alerts&units=imperial&appid=" + APIKey;
 
-  await fetch(queryURLA)
+  await fetch(queryURL)
   .then(function(response) {
     if (response.ok) {
       return response.json();
