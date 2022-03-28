@@ -122,7 +122,7 @@ var displayWeatherSummary = function(data) {
   document.querySelector("#weather-summary-container .card-header-med").textContent = cityData[2] + ", " + cityData[3] + ", " + cityData[4] + " - " + date;
   document.getElementById("weather-icon").setAttribute("src", "https://openweathermap.org/img/wn/" + data.current.weather[0].icon + "@4x.png");
   document.getElementById("temp-value").textContent = data.current.temp + " " + String.fromCharCode(176) + "F";
-  document.getElementById("wind-value").textContent = data.current.wind_speed + " MPH";
+  document.getElementById("wind-value").textContent = data.current.wind_speed + " mph";
   document.getElementById("humidity-value").textContent = data.current.humidity + "%";
   uviEl.textContent = uvi;
   uviEl.setAttribute("style", "background-color: " + getUVIColor(uvi) +";");
@@ -148,7 +148,7 @@ var displayForecast = function(data) {
     var pEl = document.createElement("p");
     pEl.innerHTML = "Temp: " + data.daily[i].temp.day + " " + String.fromCharCode(176) +
                     "F</br>Wind: " + data.daily[i].wind_speed +
-                    " MPH</br>Humidity: " + data.daily[i].humidity +
+                    " mph</br>Humidity: " + data.daily[i].humidity +
                     "%</br>UV Index: <span id='uvi-daily-"+ i +"'>"+ uvi + "</span>";
 
     var dayIconEl = document.createElement("img");
